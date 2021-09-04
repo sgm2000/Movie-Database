@@ -1,0 +1,103 @@
+package moviedatabse;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.Scanner;
+
+public class movies {
+
+	public static void main(String[] args) {
+		try {
+		DriverManager.registerDriver(new com.mysql.cj.jdbc.Driver());
+	      //Getting the connection
+	      String mysqlUrl = "jdbc:mysql://localhost/moviedb";
+	      Connection con = DriverManager.getConnection(mysqlUrl, "root", "");
+	      System.out.println("Connection established......");
+	      //Creating the Statement
+	      Statement stmt = con.createStatement();
+	      //Query to create a table
+	      String query = "CREATE TABLE MOVIES("
+	         + "ID INT NOT NULL, "
+	         + "NAME VARCHAR (20) NOT NULL, "
+	         + "ACTOR VARCHAR(20) NOT NULL, "
+	         + "ACTRESS VARCHAR(20), "
+	         + "YEAR INT NOT NULL , "
+	         +"DIRECTOR VARCHAR(20) NOT NULL,"
+	         + "PRIMARY KEY (ID))";
+	      stmt.execute(query);
+	      System.out.println("Table Created......");
+	      PreparedStatement stmt1=null;
+	      while(true)
+	      {
+	    	  System.out.println("********MOVIE DATABASE***********");
+				System.out.println("1.Insert");
+				System.out.println("2.Display");
+				System.out.println("3.Search Movie");
+				System.out.println("4.Exit");
+				Scanner in = new Scanner(System.in);
+				int choice = in.nextInt();
+				switch(choice)
+				{
+				case 1:System.out.println("------Insertion-----");
+					System.out.println("MOVIE ID:");
+			       in =new Scanner(System.in);
+			       int id=in.nextInt();
+			       System.out.println("MOVIE NAME:");
+			       in =new Scanner(System.in);
+			       String name=in.nextLine();
+			       System.out.println("ACTOR NAME:");
+			       in =new Scanner(System.in);
+			       String actorn=in.nextLine();
+			       System.out.println("ACTRESS NAME:");
+			       in =new Scanner(System.in);
+			       String actressn=in.nextLine();
+			       System.out.println("MOVIE YEAR:");
+			       in =new Scanner(System.in);
+			       int year=in.nextInt();
+			       System.out.println("DIRECTOR NAME:");
+			       in =new Scanner(System.in);
+			       String dir=in.nextLine();
+			       //stmt.executeUpdate("Insert into customer values("+id+",'"+name+"',"+amt+",'"+status+"')");
+			       stmt1=con.prepareStatement("Insert into movies values(?,?,?,?,?,?)");
+			       stmt1.setInt(1,id);
+			       stmt1.setString(2,name);
+			       stmt1.setString(3,actorn);
+			       stmt1.setString(4,actressn);
+			       stmt1.setInt(5, year);
+			       stmt1.setString(6,dir);
+			       stmt1.executeUpdate();
+			       break;
+			    
+				case 2:System.out.println("----Display------");   
+					ResultSet res=stmt.executeQuery("Select * from movies");
+					while(res.next())
+					{
+						System.out.println(res.getInt("id")+"."+res.getString("name")+"____"+res.getString("actor")+"_____"+res.getString("actress")+"____"+res.getInt("year")+"_____"+res.getString("director"));
+					}
+					break;
+				case 3:System.out.println("Enter id To Serach Movie ");
+						in = new Scanner(System.in);
+						int aname = in.nextInt();
+						String sql = "Select * from movies WHERE id =" +aname;
+						ResultSet res1=stmt.executeQuery(sql);
+						while(res1.next())
+						{
+							System.out.println(res1.getInt("id")+"."+res1.getString("name")+"____"+res1.getString("actor")+"_____"+res1.getString("actress")+"____"+res1.getInt("year")+"_____"+res1.getString("director"));
+						}
+						break;
+				case 4:System.exit(0);
+						break;
+				}
+	      }
+	      
+		}
+		catch(Exception e)
+		{
+			System.out.println(e);
+		}
+	}
+
+}
